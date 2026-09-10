@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001';
+// const API_BASE_URL = 'http://localhost:3001';
 
 const recipes = [
     {
@@ -640,7 +640,7 @@ async function extractErrorMessage(response) {
 }
 
 async function callGeneralChat(conversation) {
-    const response = await fetch(`${API_BASE_URL}/api/chat/general`, {
+    const response = await fetch(`/api/chat/general`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ conversation })
@@ -653,7 +653,7 @@ async function callGeneralChat(conversation) {
 }
 
 async function callRecipeChat(recipeTitle, conversation, prompt) {
-    const response = await fetch(`${API_BASE_URL}/api/chat/recipe`, {
+    const response = await fetch(`/api/chat/recipe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ recipeTitle, conversation, prompt })
@@ -671,7 +671,7 @@ async function callGenerateFromImage(imageFile, prompt, recipeTitle) {
     formData.append('prompt', prompt || '');
     if (recipeTitle) formData.append('recipeTitle', recipeTitle);
 
-    const response = await fetch(`${API_BASE_URL}/api/generate-from-image`, {
+    const response = await fetch(`/api/generate-from-image`, {
         method: 'POST',
         body: formData
     });
@@ -793,4 +793,28 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.contextual-quick-prompt').forEach(btn => {
         btn.addEventListener('click', () => insertContextualPrompt(btn.dataset.prompt));
     });
+});
+
+function initAutoExpandingTextarea(textareaId, formId) {
+    const textarea = document.getElementById(textareaId);
+    const form = document.getElementById(formId);
+    if (!textarea || !form) return;
+
+    textarea.addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 128) + 'px';
+    });
+
+    textarea.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            form.requestSubmit();
+            this.style.height = 'auto';
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initAutoExpandingTextarea('contextual-chat-input', 'contextual-chat-form');
+    initAutoExpandingTextarea('global-chat-input', 'global-chat-form');
 });
