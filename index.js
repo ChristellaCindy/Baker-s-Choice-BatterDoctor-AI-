@@ -196,11 +196,14 @@ app.post("/api/generate-from-image", upload.single("image"), async (req, res) =>
         }));
         return res.status(200).json({ result: response.text });
     } catch (e) {
+        console.error(`Details:`, e);
         return handleGeminiFailure(res, e, "/api/generate-from-image");
     }
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-    console.log(`BatterDoctor AI Server running on Port: ${PORT}`);
-});
+// const PORT = process.env.PORT || 3001;
+// app.listen(PORT, () => {
+//     console.log(`BatterDoctor AI Server running on Port: ${PORT}`);
+// });
+
+export default app;
